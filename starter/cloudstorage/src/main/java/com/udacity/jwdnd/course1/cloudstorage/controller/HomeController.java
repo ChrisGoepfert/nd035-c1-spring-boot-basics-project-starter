@@ -8,6 +8,8 @@ import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import java.security.Principal;
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,8 +28,42 @@ public class HomeController {
     public String getHome(Principal principal, Note note, Credential credential, Model model) {
         String username = principal.getName();
 
+        model.addAttribute(Attributes.NOTES, noteService.findNotesByUsername(username));
 
         return Templates.HOME;
+    }
+
+
+    /*
+        NOTES Section
+     */
+    @PostMapping("/notes")
+    public String postNote(Principal principal, Note note, Credential credential, Model model) {
+        String username = principal.getName();
+
+        if (Objects.isNull(note.getNoteId())) {
+            noteService.createNoteForUser(note, username);
+        } else {
+            noteService.updateNote(note);
+        }
+
+        model.addAttribute(Attributes.SUCCESS, true);
+
+        return Templates.RESULT;
+    }
+
+    @DeleteMapping("/notes/{id}")
+    public String deleteNote(
+            Principal principal,
+            @PathVariable("id") String noteId,
+            Note note,
+            Credential credential,
+            Model model) {
+        noteService.deleteNote(noteId);
+
+        model.addAttribute(Attributes.SUCCESS, true);
+
+        return Templates.RESULT;
     }
 
 
