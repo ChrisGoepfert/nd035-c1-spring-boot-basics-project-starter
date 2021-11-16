@@ -5,8 +5,9 @@ import com.udacity.jwdnd.course1.cloudstorage.mapper.UserMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,12 +19,12 @@ public class CredentialService {
     private final UserMapper userMapper;
 
     public List<Credential> findCredentialsByUsername(String username) {
-        val user = userMapper.findByUsername(username);
-        val credentials = credentialsMapper.findByUserid(user.getUserId());
+        User user = userMapper.findByUsername(username);
+        List<Credential> credentials = credentialsMapper.findByUserid(user.getUserId());
         return credentials.stream()
                 .map(
                         credential -> {
-                            val decryptedValue =
+                            String decryptedValue =
                                     encryptionService.decryptValue(credential.getPassword(), credential.getKey());
                             credential.setDecryptedPassword(decryptedValue);
                             return credential;
@@ -32,7 +33,7 @@ public class CredentialService {
     }
 
     public void createCredentialsForUser(Credential credential, String username) {
-        val user = userMapper.findByUsername(username);
+        User user = userMapper.findByUsername(username);
 
         String encodedKey = encryptionService.getRandomEncodingKey();
         String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), encodedKey);
@@ -48,9 +49,9 @@ public class CredentialService {
 
     public void updateCredential(Credential credential) {
 
-        val randomEncodingKey = encryptionService.getRandomEncodingKey();
+        String randomEncodingKey = encryptionService.getRandomEncodingKey();
         credential.setKey(randomEncodingKey);
-        val encryptedPassword =
+        String encryptedPassword =
                 encryptionService.encryptValue(credential.getPassword(), randomEncodingKey);
         credential.setPassword(encryptedPassword);
 

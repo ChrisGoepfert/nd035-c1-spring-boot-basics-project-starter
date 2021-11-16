@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +17,7 @@ public class FileService {
     private final FileMapper fileMapper;
 
     public void createFileForUser(File file, String username) {
-        val user = userMapper.findByUsername(username);
+        User user = userMapper.findByUsername(username);
 
         file.setUserId(user.getUserId());
 
@@ -40,7 +39,7 @@ public class FileService {
 
     public boolean isFileNameAvailable(String originalFilename, String username) {
         User user = userMapper.findByUsername(username);
-        val filesWithName = fileMapper.getFileCount(originalFilename, user.getUserId());
+        Integer filesWithName = fileMapper.getFileCount(originalFilename, user.getUserId());
         return filesWithName <= 0;
     }
 }
