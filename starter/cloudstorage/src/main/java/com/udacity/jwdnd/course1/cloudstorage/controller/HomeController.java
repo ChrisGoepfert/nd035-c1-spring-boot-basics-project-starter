@@ -29,7 +29,9 @@ public class HomeController {
         String username = principal.getName();
 
         model.addAttribute(Attributes.NOTES, noteService.findNotesByUsername(username));
-
+        model.addAttribute(
+                Attributes.CREDENTIALS, credentialService.findCredentialsByUsername(username));
+        model.addAttribute(Attributes.FILES, fileService.findFilesByUsername(username));
         return Templates.HOME;
     }
 
